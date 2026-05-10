@@ -1,0 +1,4 @@
+interface:
+  display_name: "Japanese Lyrics Formatter"
+  short_description: "Format lyrics with romaji and notes."
+  default_prompt: "Use $format-japanese-lyrics to turn Japanese lyrics translation and romaji files into annotated Markdown for study."

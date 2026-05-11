@@ -1,0 +1,4 @@
+interface:
+  display_name: "French Lyrics Formatter"
+  short_description: "Format French lyrics with IPA and detailed notes."
+  default_prompt: "Use $format-french-lyrics to turn a French lyrics translation file into annotated Markdown for study."

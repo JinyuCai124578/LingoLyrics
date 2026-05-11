@@ -10,20 +10,33 @@ Write annotations for French lyric study in Simplified Chinese.
 - Use this general format:
 
 ```markdown
-① amour（/amuʁ/）：阳性名词，意为“爱、爱情”；注意以元音开头，前面的定冠词常省音为 `l'amour`。
-② suis（être；présent de l'indicatif，1re personne du singulier）：动词 `être` 的直陈式现在时第一人称单数，意为“我是/我在”。
+① amour（[amur]）：阳性名词，意为“爱、爱情”；注意以元音开头，前面的定冠词常省音为 `l'amour`。
+② suis（[sɥi]）：`être` 的直陈式现在时第一人称单数，意为“我是/我在”。
 ③ ne ... pas：标准否定结构，歌词中常省略 `ne`，语气更口语。
 ```
 
-## IPA Guidance
+## French Phonetic Guidance
 
-- Use Standard French IPA in slash notation, for example `/ʒə sə ʁɛ pa/`.
-- Do not use English respelling, pinyin, or approximate Chinese pronunciation.
-- Represent French `r` as `/ʁ/`.
-- Use nasal vowels accurately: `an/en` often `/ɑ̃/`, `in/ain/ein` often `/ɛ̃/`, `on` often `/ɔ̃/`, `un` often `/œ̃/` in conservative Standard French.
+- Use French phonetic transcription in word-by-word square brackets, for example `Je ne serai pas` -> `[Ʒə] [nə] [səre] [pa]`.
+- Keep phonetic groups in the same order as lyric words. This gives practical word-level alignment without relying on fragile extra spaces.
+- Use the symbol inventory below, not International Phonetic Alphabet output, English respelling, pinyin, or approximate Chinese pronunciation.
+- Represent French `r` as `[r]` in this system.
+- Use nasal vowels accurately: `an/en` often `[ɑ̃]`, `in/ain/ein` often `[ɛ̃]`, `on` often `[ɔ̃]`, `un` often `[œ̃]`.
 - Final consonants are often silent, but pronounce final `c`, `r`, `f`, `l` when the word normally requires it.
-- Mark elision naturally: `je aime` becomes `j'aime` in spelling and `/ʒɛm/` in IPA.
+- Mark elision naturally: `je aime` becomes `j'aime` in spelling and `[Ʒεm]` in French phonetics.
 - Mark liaison only when normally expected in connected speech or careful singing, especially after determiners, pronouns, and common adjectives. Do not overforce optional poetic liaison.
+
+### Symbol Inventory
+
+- 口腔前元音: `[i] [e] [ε] [a]`
+- 口腔中元音: `[u] [o] [ɔ]`
+- 口腔后元音: `[y] [ф] [ə] [œ]`
+- 鼻化元音: `[ɛ̃] [œ̃] [ɑ̃] [ɔ̃]`
+- 爆破辅音: `[p] [b] [t] [d] [k] [g]`
+- 摩擦辅音: `[f] [v] [s] [z] [ʃ] [Ʒ]`
+- 鼻辅音: `[l] [m] [n] [ɲ]`
+- 边辅音: `[r]`
+- 半元音: `[ɥ] [w] [j]`
 
 ## Annotate
 
@@ -48,6 +61,7 @@ Write annotations for French lyric study in Simplified Chinese.
 
 For each conjugated verb, try to include:
 
+- Annotation heading shape: put only the French phonetics in parentheses, for example `sommes（[sɔm]）`.
 - Infinitive: `aime` -> `aimer`.
 - Form: `présent de l'indicatif`, `imparfait`, `passé composé`, `conditionnel présent`, `subjonctif présent`, etc.
 - Person/number: `1re personne du singulier`, `3e personne du pluriel`, etc.

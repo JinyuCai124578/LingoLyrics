@@ -179,6 +179,13 @@ main {{ max-width: 1180px; width: 100%; margin: 0 auto; padding: 22px clamp(14px
 .line.active {{ opacity: 1; transform: scale(1); background: #fff7f2; border-color: var(--accent); }}
 .jp {{ font-size: 24px; line-height: 1.55; font-weight: 700; }}
 .line.active .jp {{ font-size: 30px; }}
+.aligned-lyrics {{ display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; column-gap: 14px; row-gap: 10px; }}
+.line.active .aligned-lyrics {{ column-gap: 16px; }}
+.word-pair {{ display: inline-flex; flex-direction: column; align-items: center; min-width: max-content; text-align: center; }}
+.word-text {{ font-size: 24px; line-height: 1.25; font-weight: 700; }}
+.line.active .word-text {{ font-size: 30px; }}
+.phonetic {{ margin-top: 3px; color: var(--accent-2); font-size: 15px; line-height: 1.25; font-weight: 500; white-space: nowrap; }}
+.line.active .phonetic {{ font-size: 17px; }}
 .romaji {{ margin-top: 8px; color: var(--accent-2); font-size: 16px; line-height: 1.55; }}
 .romaji strong {{ color: #0f5f59; font-weight: 800; }}
 .romaji em {{ color: #8b5e27; font-style: italic; }}
@@ -202,7 +209,8 @@ footer {{ border-top: 1px solid var(--line); background: rgba(255,253,250,.96); 
 .time {{ color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; min-width: 102px; text-align: right; }}
 .progress {{ width: 100%; accent-color: var(--accent); }}
 body.hide-romaji .romaji, body.hide-translation .translation, body.hide-notes .notes {{ display: none; }}
-@media (max-width: 860px) {{ .topbar {{ align-items: flex-start; flex-direction: column; }} .controls {{ justify-content: flex-start; }} main {{ grid-template-columns: 1fr; }} .stage {{ min-height: 58vh; max-height: 58vh; }} .lyrics {{ padding-left: 16px; padding-right: 16px; }} .line {{ padding: 14px; margin-bottom: 20px; }} .jp {{ font-size: 21px; }} .line.active .jp {{ font-size: 24px; }} .transport {{ grid-template-columns: auto 1fr; }} .time {{ grid-column: 1 / -1; text-align: left; }} }}
+body.hide-romaji .phonetic {{ display: none; }}
+@media (max-width: 860px) {{ .topbar {{ align-items: flex-start; flex-direction: column; }} .controls {{ justify-content: flex-start; }} main {{ grid-template-columns: 1fr; }} .stage {{ min-height: 58vh; max-height: 58vh; }} .lyrics {{ padding-left: 16px; padding-right: 16px; }} .line {{ padding: 14px; margin-bottom: 20px; }} .jp, .word-text {{ font-size: 21px; }} .line.active .jp, .line.active .word-text {{ font-size: 24px; }} .transport {{ grid-template-columns: auto 1fr; }} .time {{ grid-column: 1 / -1; text-align: left; }} }}
 </style>
 </head>
 <body>
@@ -224,7 +232,22 @@ function renderInlineMarkdown(value) {{
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
 }}
-function renderLyrics() {{ lyricsEl.innerHTML = DATA.items.map((item, index) => `<article class="line" data-index="${{index}}"><div class="jp">${{escapeHtml(item.japanese)}}</div><div class="romaji">${{renderInlineMarkdown(item.romaji || '')}}</div><div class="translation">${{escapeHtml(item.translation || '')}}</div><div class="notes">${{(item.notes || []).map(note => `<div>${{escapeHtml(note)}}</div>`).join('')}}</div></article>`).join(''); }}
+function splitPhoneticGroups(value) {{
+  const text = String(value || '').trim();
+  if (!text) return [];
+  const groups = text.match(/\[[^\]]+\]/g) || [];
+  return groups.length && groups.join(' ') === text ? groups : [];
+}}
+function renderLyricMain(item) {{
+  const words = String(item.japanese || '').trim().split(/\s+/).filter(Boolean);
+  const phonetics = splitPhoneticGroups(item.romaji);
+  if (words.length && words.length === phonetics.length) {{
+    const pairs = words.map((word, wordIndex) => `<span class="word-pair"><span class="word-text">${{escapeHtml(word)}}</span><span class="phonetic">${{escapeHtml(phonetics[wordIndex])}}</span></span>`).join('');
+    return `<div class="aligned-lyrics">${{pairs}}</div>`;
+  }}
+  return `<div class="jp">${{escapeHtml(item.japanese)}}</div><div class="romaji">${{renderInlineMarkdown(item.romaji || '')}}</div>`;
+}}
+function renderLyrics() {{ lyricsEl.innerHTML = DATA.items.map((item, index) => `<article class="line" data-index="${{index}}">${{renderLyricMain(item)}}<div class="translation">${{escapeHtml(item.translation || '')}}</div><div class="notes">${{(item.notes || []).map(note => `<div>${{escapeHtml(note)}}</div>`).join('')}}</div></article>`).join(''); }}
 function formatTime(value) {{ const safe = Math.max(0, value || 0), minutes = Math.floor(safe / 60), seconds = Math.floor(safe % 60); return `${{String(minutes).padStart(2, '0')}}:${{String(seconds).padStart(2, '0')}}`; }}
 function getCurrentTime() {{ return useAudio ? audio.currentTime : simulatedTime; }}
 function getDuration() {{ return useAudio && Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : duration; }}

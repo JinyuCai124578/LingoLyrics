@@ -50,8 +50,10 @@ Chinese translation line
 - Preserve English words in the lyric as originally styled, such as `Harmony`, `Heart Beat`, `Moonlight`.
 - Put the Chinese translation immediately after the romaji line.
 - Use numbered annotations `①`, `②`, `③` in order. Usually 1-4 notes per line is enough; use more only when the line is dense.
+- In generated lyric notes, wrap quoted Japanese words, grammar forms, particles, and set phrases in Japanese corner brackets, for example `「虚しい」`, `「てしまう」`, `「が」`. Do not use Markdown inline-code backticks for these language examples.
 - For simple repeated interjections such as `Yeah`, output the line pair and separator without forced annotations.
 - Keep annotations concise and objective. Avoid long literary commentary unless the user requests interpretation.
+- Keep annotation depth consistent from the beginning to the end of the file. Do not let later blocks become shorter or vaguer just because many lines have already been processed.
 
 ## Annotation Priorities
 
@@ -60,8 +62,10 @@ Read `references/annotation-guidelines.md` when writing or revising notes. In sh
 - Prefer notes that help with meaning, grammar, pronunciation, word origin, register, or translation differences.
 - Explain vocabulary, verbs, adjectives, adverbs, mimetic words, loanwords, idioms, difficult kanji readings, and useful set phrases.
 - Explain grammar when it changes interpretation: negation, contrast, connective patterns, potential/passive/causative forms, omissions, colloquial contractions, sentence-ending nuance.
-- Avoid standalone notes for basic particles such as `の`, `が`, `は`, `を`, `に`, `で`, `と`, `も`, `から`, `まで`, `へ`, `や`, unless the use is special or part of a larger expression.
+- Avoid standalone notes for basic particles such as 「の」, 「が」, 「は」, 「を」, 「に」, 「で」, 「と」, 「も」, 「から」, 「まで」, 「へ」, 「や」, unless the use is special or part of a larger expression.
 - Avoid explaining ordinary inflection unless it matters for understanding.
+- Use the same level of specificity for later occurrences as for earlier ones: include readings, romaji, part of speech/function, and concise usage notes when similar earlier notes included them.
+- For repeated or parallel chorus lines, either repeat the useful notes at comparable detail or explicitly note the contrast with the earlier occurrence. Do not silently reduce a later repeated section to bare translations only.
 
 ## Helper Script
 
@@ -95,5 +99,7 @@ Before finishing, verify:
 - Every non-header lyric block has Japanese, romaji, and Chinese translation in that order.
 - `---` separators are present between blocks.
 - Notes use Simplified Chinese and numbered markers.
+- Notes use Japanese corner brackets `「」` for quoted Japanese terms and grammar forms, not Markdown inline-code backticks.
+- Early, middle, and late lyric blocks have comparable annotation density and specificity, except for genuinely simple or repeated interjection lines.
 - Romaji style is consistent with the source file, or consistently generated in mora-spaced Hepburn style when no source file exists.
 - The output has no unfinished placeholders unless the user explicitly requested a skeleton only.

@@ -242,6 +242,8 @@ document.getElementById('songSubtitle').textContent = DATA.subtitle || '滚动�
 function escapeHtml(value) {{ return String(value).replace(/[&<>"']/g, ch => ({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[ch])); }}
 function renderInlineMarkdown(value) {{
   return escapeHtml(value)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/~~([^~]+)~~/g, '<del>$1</del>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
 }}
@@ -255,18 +257,18 @@ function renderLyricMain(item) {{
   const words = String(item.japanese || '').trim().split(/\s+/).filter(Boolean);
   const phonetics = splitPhoneticGroups(item.romaji);
   if (words.length && words.length === phonetics.length) {{
-    const pairs = words.map((word, wordIndex) => `<span class="word-pair"><span class="word-text">${{escapeHtml(word)}}</span><span class="phonetic">${{escapeHtml(phonetics[wordIndex])}}</span></span>`).join('');
+    const pairs = words.map((word, wordIndex) => `<span class="word-pair"><span class="word-text">${{renderInlineMarkdown(word)}}</span><span class="phonetic">${{renderInlineMarkdown(phonetics[wordIndex])}}</span></span>`).join('');
     return `<div class="aligned-lyrics">${{pairs}}</div>`;
   }}
-  return `<div class="jp">${{escapeHtml(item.japanese)}}</div><div class="romaji">${{renderInlineMarkdown(item.romaji || '')}}</div>`;
+  return `<div class="jp">${{renderInlineMarkdown(item.japanese || '')}}</div><div class="romaji">${{renderInlineMarkdown(item.romaji || '')}}</div>`;
 }}
-function renderLyrics() {{ lyricsEl.innerHTML = DATA.items.map((item, index) => `<article class="line" data-index="${{index}}">${{renderLyricMain(item)}}<div class="translation">${{escapeHtml(item.translation || '')}}</div><div class="notes">${{(item.notes || []).map(note => `<div>${{escapeHtml(note)}}</div>`).join('')}}</div></article>`).join(''); }}
+function renderLyrics() {{ lyricsEl.innerHTML = DATA.items.map((item, index) => `<article class="line" data-index="${{index}}">${{renderLyricMain(item)}}<div class="translation">${{renderInlineMarkdown(item.translation || '')}}</div><div class="notes">${{(item.notes || []).map(note => `<div>${{renderInlineMarkdown(note)}}</div>`).join('')}}</div></article>`).join(''); }}
 function formatTime(value) {{ const safe = Math.max(0, value || 0), minutes = Math.floor(safe / 60), seconds = Math.floor(safe % 60); return `${{String(minutes).padStart(2, '0')}}:${{String(seconds).padStart(2, '0')}}`; }}
 function getCurrentTime() {{ return useAudio ? audio.currentTime : simulatedTime; }}
 function getDuration() {{ return useAudio && Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : duration; }}
 function setCurrentTime(value) {{ const clamped = Math.max(0, Math.min(value, getDuration())); if (useAudio) audio.currentTime = clamped; simulatedTime = clamped; update(); }}
 function findActiveIndex(time) {{ let lo = 0, hi = DATA.items.length - 1, result = 0; while (lo <= hi) {{ const mid = Math.floor((lo + hi) / 2); if (DATA.items[mid].time <= time) {{ result = mid; lo = mid + 1; }} else hi = mid - 1; }} return result; }}
-function setActive(index) {{ if (index === activeIndex) return; const prev = lyricsEl.querySelector('.line.active'); if (prev) prev.classList.remove('active'); const next = lyricsEl.querySelector(`.line[data-index="${{index}}"]`); if (next) {{ next.classList.add('active'); next.scrollIntoView({{ behavior: 'smooth', block: 'center' }}); }} activeIndex = index; const item = DATA.items[index]; currentText.textContent = item ? item.japanese : ''; currentNotes.innerHTML = showSideNotes && item ? (item.notes || []).map(escapeHtml).join('<br>') : ''; }}
+function setActive(index) {{ if (index === activeIndex) return; const prev = lyricsEl.querySelector('.line.active'); if (prev) prev.classList.remove('active'); const next = lyricsEl.querySelector(`.line[data-index="${{index}}"]`); if (next) {{ next.classList.add('active'); next.scrollIntoView({{ behavior: 'smooth', block: 'center' }}); }} activeIndex = index; const item = DATA.items[index]; currentText.innerHTML = item ? renderInlineMarkdown(item.japanese || '') : ''; currentNotes.innerHTML = showSideNotes && item ? (item.notes || []).map(renderInlineMarkdown).join('<br>') : ''; }}
 function update() {{ const now = getCurrentTime(), total = getDuration(); progress.value = total > 0 ? Math.round((now / total) * 1000) : 0; timeEl.textContent = `${{formatTime(now)}} / ${{formatTime(total)}}`; if (DATA.items.length) setActive(findActiveIndex(now)); }}
 function tick(stamp) {{ if (!lastTick) lastTick = stamp; const delta = (stamp - lastTick) / 1000; lastTick = stamp; if (playing && !useAudio) {{ simulatedTime += delta * playbackRate; if (simulatedTime >= duration) {{ simulatedTime = duration; playing = false; playBtn.textContent = '播放'; }} update(); }} requestAnimationFrame(tick); }}
 playBtn.addEventListener('click', async () => {{ if (useAudio) {{ if (audio.paused) await audio.play(); else audio.pause(); return; }} playing = !playing; playBtn.textContent = playing ? '暂停' : '播放'; }});
